@@ -35,8 +35,8 @@ be expected to work against the corresponding EL Python release, as long as it w
 any bugs that had been fixed in CPython, but the fix hadn't been backported due to backwards
 compatibility concerns that were deemed acceptable for CPython, but not for EL Python.
 
-This means that for projects which already promptly drop support for older CPython versions as new
-feature releases become available, or when a given maintenance branch is no longer receiving
+This means that for projects which already promptly drop support for older CPython versions when
+new feature releases become available, or when a given maintenance branch is no longer receiving
 security updates, EL Python would have no impact on the typical testing matrix.
 
 Where EL Python may potentially becoming an interesting testing target for Python community projects
@@ -73,6 +73,11 @@ opt-in behaviour toggles that don't appear in regular CPython releases.
 One big difference would be that EL Python would be a source-only project: it would *not* provide
 any prebuilt binary installers for any platform. Instead, the expectation would be that
 redistributors would take the project and produce binaries in the formats of interest to them.
+
+In addition, while EL Python would transparently consume extension modules and wheel files built
+for CPython, a mechanism would need to be provided for publishers to indicate when their
+artifacts were EL Python specific (i.e. they're depending on a feature backported from a later
+Python release).
 
 # What is the proposed relationship with the PSF?
 
