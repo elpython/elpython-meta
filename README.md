@@ -88,4 +88,9 @@ would be required to sign the CPython CLA before their contributions can be acce
 
 # What about Python 2?
 
-While EL Python itself would be Python 3 only, the tauthon project is already pursuing a similar concept for Python 2.7: https://github.com/naftaliharris/tauthon
+While EL Python itself is being proposed as a Python 3 only project, the ``tauthon`` project is
+already pursuing a similar concept for Python 2.7: https://github.com/naftaliharris/tauthon
+
+*If* EL Python were to ever gain a Python 2.7 branch, it would only be in the form of a post-2020
+security-fix-only branch, rather than the kind of feature backport branch being proposed for 3.x
+releases.
