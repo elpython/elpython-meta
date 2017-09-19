@@ -26,6 +26,41 @@ commercial Python redistributors to invest in providing a CPython variant that p
   mandatory rebuilds of extension modules or regeneration of `pyc` files
 - support for enterprise features that are of questionable value in the context of educational
   use cases and smaller organisations
+  
+# What does "no mandatory rebuilds or file regeneration" mean?
+
+Migrating to a new CPython feature release necessarily means doing the following:
+
+* reinstalling all components installed into `site-packages` to account for the new directory name
+* regenerating all pyc files to use the new compatibility tag and (typically) magic number
+* rebuilding any extension modules that targeted the regular CPython C API, rather than the limited
+  API that offers greater assurances of ABI stability across feature releases
+* regenerating all version-specific wheel files using the new version compatibility tag
+* refreshing all virtual environments to account for the change in the path of `site-packages`,
+  any changes to the standard library layout, and for the changes to `pyc` file and extension module
+  naming schemes
+
+These updates are required even if the affected software is otherwise entirely compatible with both
+runtime versions at a source code level.
+
+The "no mandatory rebuilds or file regeneration" requirement means that:
+
+1. Any EL Python branch will *always* use the filesystem layout of the corresponding CPython X.Y.0
+   release
+2. Any EL Python branch will *always* support loading `pyc` files and extension modules named with
+   the compatibility tags for the corresponding CPython X.Y.0 release
+3. Any EL Python branch will *always* support installing wheel files using the compatibility tags
+   for the corresponding CPython X.Y.0 release
+
+Features and fixes will thus only be considered as potential backport candidates from CPython to
+EL Python if either:
+
+* the original change didn't require an update to the filesystem layout or any of the file
+  compatibility tags; or
+* an alternate (potentially harder to maintain) implementation is available that doesn't require
+  an update to the filesystem layout or any of the file compatibility tags; or
+* EL Python itself has been enhanced to support new, EL Python specific, file compatibility tags,
+  without losing support for the corresponding CPython X.Y.0 compatibility tags
 
 # How would EL Python be expected to affect the testing matrix for community Python projects?
 
@@ -86,9 +121,46 @@ Python release).
 We'd like EL Python to be a PSF backed project, just like CPython, and contributors to EL Python
 would be required to sign the CPython CLA before their contributions can be accepted.
 
+# What are the alternatives to pursuing the EL Python idea?
+
+Historically, redistributors (most notably Red Hat, as part of Red Hat Enterprise Linux) have
+offered long term commercial support for CPython simply by choosing a particular CPython X.Y.Z
+release, and then offering that specific version for an extended period of time, focusing
+mainly on security fixes, backports of requested bug fixes, and occasionally backports of
+smaller features (e.g. backporting `collections.OrderedDict` from Python 2.7 to Python 2.6
+in RHEL & CentOS 6).
+
+An example of this approach can be seen by looking at the patch set for Python 2.7 in CentOS 7,
+which relies on selective backports atop 2.7.5 rather than rebasing outright to upstream
+maintenance releases: https://git.centos.org/tree/rpms!python.git/c7/SOURCES
+
+Unfortunately, while this approach does address the key concern of providing a stable,
+long-lived foundation for enterprise developers to build on, many other aspects of the
+related developer experience are considered highly undesirable:
+
+* enterprise developers targeting these long term support releases miss out on even fully
+  backwards compatible enhancements added in later CPython feature releases, reducing
+  the incentive for their employers to contribute to CPython maintenance & feature
+  development (whether directly or indirectly via a commercial redistributor)
+* enhancements to the language, reference implementation and standard library often take
+  years to see truly broad adoption, as libraries and frameworks maintaining compatibility
+  with these older CPython releases are also often unable to adopt them, even if the project
+  maintainers themselves are regularly upgrading to newer CPython releases. (See
+  [this 2015 post](https://alexgaynor.net/2015/mar/30/red-hat-open-source-community/) from
+  Alex Gaynor, and
+  [this reply](http://www.curiousefficiency.org/posts/2015/04/stop-supporting-python26.html)
+  from Nick Coghlan for further discussion of that problem)
+* the developers *maintaining* these long term support branches are working in organisation
+  specific silos, making it difficult to ensure cross-platform consistency in the resulting
+  Python developer experience
+* even when selected features *are* backported to these existing LTS releases, this isn't
+  communicated in a clear and consistent way, so developers may not be aware they can rely
+  on those features being present
+  
+
 # What about Python 2?
 
-While EL Python itself is being proposed as a Python 3 only project, the ``tauthon`` project is
+While EL Python itself is being proposed as a Python 3 only project, the `tauthon` project is
 already pursuing a similar concept for Python 2.7: https://github.com/naftaliharris/tauthon
 
 *If* EL Python were to ever gain a Python 2.7 branch, it would only be in the form of a post-2020
