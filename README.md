@@ -63,9 +63,11 @@ and the withdrawn [PEP 413](https://www.python.org/dev/peps/pep-0413/) for detai
 # What is the proposed relationship with CPython?
 
 *All* functional changes to EL Python should either appear in CPython first, or else be covered by a
-draft PEP that has been submitted for consideration for a future version of CPython.
+draft PEP that has been submitted for consideration for a future version of CPython, and *python-dev*
+has made the determination that it is suitable for inclusion as an EL Python feature, pending
+further consideration as a potential mainline CPython feature.
 
-To ensure the absence of churn-related compatibility breaks, EL Python may end up including
+To ensure the absence of churn-related compatibility breaks, EL Python may also end up including
 opt-in behaviour toggles that don't appear in regular CPython releases.
 
 # How else would EL Python differ from CPython?
