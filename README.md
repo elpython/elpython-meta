@@ -115,7 +115,7 @@ new feature releases become available, or when a given maintenance branch is no 
 security updates, EL Python should have no impact on the typical testing matrix (and this is
 considered a desirable outcome).
 
-Where EL Python may potentially becoming an interesting testing target for Python community projects
+Where EL Python may potentially become an interesting testing target for Python community projects
 is in the following cases:
 
 - when a given CPython maintenance branch is no longer receiving security updates, some projects
