@@ -51,8 +51,8 @@ is in the following cases:
   EL Python variant of that older release, and not the regular CPython release
  
 The goal of this approach is that the existence of EL Python should never *increase* the testing
-burden for any community project - if EL Python is added to a testing matrix, it should be
-accompanied by the *removal* of the corresponding CPython branch (either because that branch is
+burden for any community project - if EL Python is added to a testing matrix, it should typically
+be accompanied by the *removal* of the corresponding CPython branch (either because that branch is
 no longer receiving security updates, or because it lacks a feature the project is now relying on).
 
 By contrast, both previous proposals for making new CPython features available to end users without
