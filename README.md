@@ -27,7 +27,7 @@ commercial Python redistributors to invest in providing a CPython variant that p
 - support for enterprise features that are of questionable value in the context of educational
   use cases and smaller organisations
   
-# What does "no mandatory rebuilds or file regeneration" mean?
+# What does "no mandatory file regeneration" mean?
 
 Migrating to a new CPython feature release necessarily means doing the following:
 
