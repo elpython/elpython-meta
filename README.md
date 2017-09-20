@@ -23,9 +23,11 @@ commercial Python redistributors to invest in providing a CPython variant that p
 
 - near zero churn-related compatibility breaks in maintenance releases
 - the availability of selected new features from later language versions without requiring
-  mandatory rebuilds of extension modules or regeneration of `pyc` files
-- support for enterprise features that are of questionable value in the context of educational
-  use cases and smaller organisations
+  changes to file installation layours, mandatory rebuilds of extension modules or
+  regeneration of `pyc` files
+- support for complex interpreter level features that are clearly beneficial for production
+  infrastructure in large enterprise organisations, but may be of more questionable value in the
+  context of smaller organisations, educational use cases, or research & development activities
 
 # How would EL Python versions be identified?
 
