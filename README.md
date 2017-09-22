@@ -152,6 +152,11 @@ EL Python may also end up including opt-in behaviour toggles that don't appear i
 feature releases (see PEP 493 for some examples of this kind of toggle related to backporting
 the PEP 476 change to always verify HTTPS certificates by default).
 
+To allow for transparent upgrades from a regular CPython build to EL Python, the directory paths
+used in EL Python would necessarily be fully compatible with those used by CPython (e.g. the `/usr/lib`
+and `/usr/lib` subdirectories would still be called `pythonX.Y`). However, EL Python may also
+add additional EL Python specific directories that a regular CPython build will ignore.
+
 # How else would EL Python differ from CPython?
 
 One big difference would be that EL Python would be a source-only project: it would *not* provide
@@ -159,13 +164,10 @@ any prebuilt binary installers for any platform. Instead, the expectation would 
 redistributors would take the project and produce prebuilt binaries in the formats of interest
 to them.
 
-To allow for parallel installation with regular CPython builds, some directory paths are also
-likely to be different (e.g. the `/usr/lib` and `/usr/lib` subdirectories may be called
-`elpythonX.Y` rather than CPython's `pythonX.Y`)
-
-In addition, while EL Python would transparently consume extension modules and wheel files built
-for CPython, a mechanism would need to be provided for publishers to indicate when their
-artifacts were EL Python specific (i.e. when they're depending on a feature backported from
+In addition, while EL Python would transparently consume pyc files, extension modules and wheel
+files built for CPython, and would default to emitting CPython compatible versions of such
+files, a mechanism would need to be provided for publishers to indicate when their
+artifacts were EL Python specific (e.g. when they're depending on a feature backported from
 a later Python release).
 
 # What is the proposed relationship with the PSF?
