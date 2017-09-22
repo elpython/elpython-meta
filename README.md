@@ -159,10 +159,14 @@ any prebuilt binary installers for any platform. Instead, the expectation would 
 redistributors would take the project and produce prebuilt binaries in the formats of interest
 to them.
 
+To allow for parallel installation with regular CPython builds, some directory paths are also
+likely to be different (e.g. the `/usr/lib` and `/usr/lib` subdirectories may be called
+`elpythonX.Y` rather than CPython's `pythonX.Y`)
+
 In addition, while EL Python would transparently consume extension modules and wheel files built
 for CPython, a mechanism would need to be provided for publishers to indicate when their
-artifacts were EL Python specific (i.e. they're depending on a feature backported from a later
-Python release).
+artifacts were EL Python specific (i.e. when they're depending on a feature backported from
+a later Python release).
 
 # What is the proposed relationship with the PSF?
 
