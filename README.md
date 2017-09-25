@@ -10,7 +10,8 @@ paid developers working for commercial redistributors to collaborate on:
 
 - maintenance branches with even stricter backwards compatibility requirements than regular CPython
   maintenance branches
-- long-lived maintenance branches that permit feature backports from later CPython feature releases 
+- long-lived maintenance branches that permit feature and performance improvement backports from
+  later CPython feature releases 
 - features of interest to enterprise Python users where it isn't clear yet if the associated maintenance
   burdens will be low enough for the CPython community project to reasonably accept
 - provisional availability of new features that have been accepted for a future CPython feature release,
@@ -23,11 +24,63 @@ commercial Python redistributors to invest in providing a CPython variant that p
 
 - near zero churn-related compatibility breaks in maintenance releases
 - the availability of selected new features from later language versions without requiring
-  changes to file installation layours, mandatory rebuilds of extension modules or
+  changes to file installation layouts, mandatory rebuilds of extension modules or
   regeneration of `pyc` files
 - support for complex interpreter level features that are clearly beneficial for production
   infrastructure in large enterprise organisations, but may be of more questionable value in the
   context of smaller organisations, educational use cases, or research & development activities
+
+# How would this idea be pursued?
+
+If this idea ends up being pursued further, then this README would be redrafted in the form of
+a Python Enhancement Proposal and submitted to python-dev for consideration.
+
+Actually taking that step would be conditional on credible commitments of full-time developer
+support from interested commercial Python redistributors :)
+
+# How often would new EL Python releases happen?
+
+EL Python releases would be made on a six-monthly cadence, with the releases deliberately
+timed to align with the development schedules of the Fedora and Ubuntu Linux distributions.
+
+* Typical Ubuntu release dates: April, October
+* Typical Ubuntu feature freeze dates: February, August
+* Typical Fedora release dates: May, October
+* Typical Fedora feature freeze dates: March, September
+
+Given those dates, the target dates for EL Python releases would be the final week of January
+and the final week of July each year.
+
+# Which CPython branches would EL Python track?
+
+By default, there would be an EL Python maintenance branch for each CPython maintenance
+branch. These branches would all include a core set of patches that:
+
+* added the EL Python version and variant information
+* added any EL-Python-only features that had not yet been approved for inclusion in
+  the CPython reference implementation (the ideal size of this patch set is for it to
+  be empty, but it may be non-empty due to features that offer clear value to enterprise
+  users, where python-dev is nevertheless collectively skeptical as to the value for
+  broader audiences)
+
+Each branch would also include a set of approved backports from later CPython maintenance and feature releases.
+
+In addition, at the EL Python maintainers' discretion, some EL Python maintenance branches
+may be defined as LTS branches, which would live on beyond the mainstream EOL of the
+corresponding CPython branches.
+
+# Who would have merge permissions for EL Python branches?
+
+At least initially, EL Python merge permissions would be restricted to staff working
+for commercial redistributors participating in the EL Python effort.
+
+This is due to the fact that the proposed differences in maintenance policies between
+EL Python and CPython are driven almost entirely by commercial support requirements,
+which gives EL Python a strongly vendor-driven character that isn't the case for the
+more egalitarian, community-driven, CPython project.
+
+It's expected that this restriction would eventually be dropped - it's just a
+simplfying community management assumption to start out with.
 
 # How would EL Python versions be identified?
 
@@ -35,22 +88,22 @@ It is proposed that EL Python versions be identified through a combination of se
 and calendar versioning:
 
 * SemVer (X.Y.Z) for the base CPython version (e.g. 3.6.2)
-* CalVer plus a patch release serial number (YY.MM.N) for EL Python backports (e.g. 18.06.0)
+* CalVer plus a patch release serial number (YY.MM.N) for EL Python releases (e.g. 18.01.0)
 
 This information will be reported as:
 
 * `sys.version_info` -> `sys.version_info(major=3, minor=6, micro=2, releaselevel='final', serial=0)`
 * `sys.hex_version` -> `0x30602f0`
-* `sys.implementation.version` -> `sys.version_info(major=18, minor=6, micro=0, releaselevel='final', serial=0)`
-* `sys.implementation.hexversion` -> `0x120600f0`
-* `sys.version` -> `3.6.2.18.06.0 (... other build details ...)`
+* `sys.implementation.version` -> `sys.version_info(major=18, minor=1, micro=0, releaselevel='final', serial=0)`
+* `sys.implementation.hexversion` -> `0x120100f0`
+* `sys.version` -> `3.6.2.18.01.0 (... other build details ...)`
 
 To maximise backwards compatibility (and to ensure that otherwise CPython specific test cases
-are run), `sys.implementation.name` will most likely be reported as `"cpython"` in EL Python
+are run), `sys.implementation.name` will be reported as `"cpython"` in EL Python
 branches, and the default CPython `sys.implementation.cache_tag` will also be re-used.
 
 Even if no other markers were added, this would be sufficient to allow CPython and EL Python
-builds to be definitively distinguished based on:
+builds to be fairly reliably distinguished based on:
 
     impl = sys.implementation
     if impl.name == 'cpython':
@@ -60,14 +113,18 @@ builds to be definitively distinguished based on:
             print("EL Python")
 
 However, as a more robust marker that also allows for identification of other CPython
-variants, an additional implementation-specific field, `_variant` would be added:
+variants, an additional implementation-specific field, `variant` would be added:
 
-* `sys.implementation._variant` -> `elpython`
+* `sys.implementation.variant` -> `elpython`
 
-Other patched CPython builds would be encouraged to start populating that field
-(and it could potentially be proposed as a standard field without the underscore
-prefix for Python 3.7+).
-  
+This would be proposed as a new standard `sys.implementation` field for Python
+3.7+ (defaulting to `reference` for reference implementations, such as CPython
+itself).
+
+Redistributors would be encouraged to always set it appropriately to help
+identify their particular builds (using the `elpython-` prefix for EL Python
+rebuilds).
+
 # What does "no mandatory file regeneration" mean?
 
 Migrating to a new CPython feature release necessarily means doing the following:
@@ -86,8 +143,8 @@ runtime versions at a source code level.
 
 The "no mandatory rebuilds or file regeneration" requirement means that:
 
-1. Any EL Python branch will *always* use the filesystem layout of the corresponding CPython X.Y.Z
-   release
+1. Any EL Python branch will *always* support the filesystem layout of the corresponding CPython
+   X.Y.Z release
 2. Any EL Python branch will *always* support loading `pyc` files and extension modules named with
    the compatibility tags for the corresponding CPython X.Y.Z release
 3. Any EL Python branch will *always* support installing wheel files using the compatibility tags
@@ -122,9 +179,9 @@ is in the following cases:
 
 - when a given CPython maintenance branch is no longer receiving security updates, some projects
   may choose to start testing against the corresponding EL Python branch instead of completely
-  dropping support for than version (assuming that an EL Python branch exists for that version
-  and has a longer lifecycle than the regular CPython one - that may not be the case for all
-  branches)
+  dropping support for that version (assuming that an EL Python branch exists for that version
+  with a longer lifecycle than the regular CPython one - as noted above, that will only be the
+  case for selected branches)
 - when a project wants or needs to adopt a feature from a later CPython release, and that feature
   has been backported to EL Python, some projects may choose to switch to only supporting the
   EL Python variant of that older release, and not the regular CPython release
@@ -168,12 +225,26 @@ In addition, while EL Python would transparently consume pyc files, extension mo
 files built for CPython, and would default to emitting CPython compatible versions of such
 files, a mechanism would need to be provided for publishers to indicate when their
 artifacts were EL Python specific (e.g. when they're depending on a feature backported from
-a later Python release).
+a later CPython release).
 
 # What is the proposed relationship with the PSF?
 
 We'd like EL Python to be a PSF backed project, just like CPython, and contributors to EL Python
 would be required to sign the CPython CLA before their contributions can be accepted.
+
+# What Code of Conduct would the project use?
+
+EL Python would operate under the Contributor Covenant: https://www.contributor-covenant.org/
+
+# How would the CoC be enforced?
+
+Initially, by the folks with merge privileges, with their respective employers and the PSF
+Board available as potential paths of escalation for any CoC concerns relating to the project
+maintainers themselves. EL Python would also respect any existing org-wide bans from PSF
+provided communication channels.
+
+Eventually, as the PSF defines clearer processes for reporting of CoC concerns for the
+projects it oversees, EL Python would explicitly opt in to being covered by that process.
 
 # What are the alternatives to pursuing the EL Python idea?
 
@@ -212,14 +283,14 @@ related developer experience are considered highly undesirable:
   can rely on those features being present on the platforms they care about
 
 The EL Python concept arose from asking the question of how we might effectively address
-the established commercial demand for long term support versions in a way that:
+the established commercial demand for a long term support variant of CPython in a way that:
 
 * doesn't result in an inherently poor developer experience when targeting long-term support
   versions (especially later in their lifecycle)
 * makes long term support versions (almost) as easy to develop and test against as regular
   CPython releases
 * reduces the risk of fragmenting the Python developer experience across different competing
-  long-term support vendors
+  long term support vendors
 * makes it clear that offering long term support is considered the domain of professional
   software developers that are getting paid to meet that obligation, rather than something
   that can reasonably be expected of community volunteers
@@ -237,5 +308,5 @@ While EL Python itself is being proposed as a Python 3 only project, the `tautho
 already pursuing a similar concept for Python 2.7: https://github.com/naftaliharris/tauthon
 
 *If* EL Python were to ever gain a Python 2.7 branch, it would only be in the form of a post-2020
-security-fix-only branch, rather than the kind of feature backport branch being proposed for 3.x
-releases.
+security-fix branch (including network security stack upgrades), rather than the kind of feature
+backport branch being proposed for 3.x releases.
