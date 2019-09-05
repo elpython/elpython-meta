@@ -6,7 +6,7 @@ Whether it will ever become more than that remains to be seen :)
 # What is the idea?
 
 EL Python would be a CPython 3.x variant tailored for Enterprise Lifecycles. It would exist as a venue for
-paid developers working for commercial redistributors to collaborate on:
+paid developers working for commercial redistributors and other organisations to collaborate on:
 
 - maintenance branches with even stricter backwards compatibility requirements than regular CPython
   maintenance branches
