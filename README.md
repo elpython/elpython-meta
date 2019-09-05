@@ -20,7 +20,8 @@ paid developers working for commercial redistributors to collaborate on:
 By defining EL Python as a separate project from CPython, we'd be able to make it clear that we
 *don't* consider it reasonable to ask volunteer community contributors to invest their personal time
 in meeting the needs of large enterprise organisations, but we *do* consider it reasonable for
-commercial Python redistributors to invest in providing a CPython variant that promises:
+commercial Python redistributors and other organisations using Python to invest in providing a
+CPython variant that promises:
 
 - near zero churn-related compatibility breaks in maintenance releases
 - the availability of selected new features from later language versions without requiring
@@ -36,7 +37,7 @@ If this idea ends up being pursued further, then this README would be redrafted 
 a Python Enhancement Proposal and submitted to python-dev for consideration.
 
 Actually taking that step would be conditional on credible commitments of full-time developer
-support from interested commercial Python redistributors :)
+support from interested commercial Python redistributors and other organisations :)
 
 # How often would new EL Python releases happen?
 
@@ -72,12 +73,14 @@ corresponding CPython branches.
 # Who would have merge permissions for EL Python branches?
 
 At least initially, EL Python merge permissions would be restricted to staff working
-for commercial redistributors participating in the EL Python effort.
+for commercial redistributors and other organisations formally participating in the
+EL Python effort (where the exact nature of "formal participation" would be defined
+in collaboration with the Python Software Foundation).
 
 This is due to the fact that the proposed differences in maintenance policies between
-EL Python and CPython are driven almost entirely by commercial support requirements,
-which gives EL Python a strongly vendor-driven character that isn't the case for the
-more egalitarian, community-driven, CPython project.
+EL Python and CPython are driven almost entirely by commercial and enterprise support
+requirements, which gives EL Python a strongly business-driven character that isn't the
+case for the more egalitarian, community-driven, CPython project.
 
 It's expected that this restriction would eventually be dropped - it's just a
 simplfying community management assumption to start out with.
@@ -118,8 +121,8 @@ variants, an additional implementation-specific field, `variant` would be added:
 * `sys.implementation.variant` -> `elpython`
 
 This would be proposed as a new standard `sys.implementation` field for Python
-3.7+ (defaulting to `reference` for reference implementations, such as CPython
-itself).
+3.9+ (defaulting to `reference` for reference implementations, such as CPython
+itself for the ``sys.implementation.name == 'cpython'`` case).
 
 Redistributors would be encouraged to always set it appropriately to help
 identify their particular builds (using the `elpython-` prefix for EL Python
@@ -218,8 +221,8 @@ add additional EL Python specific directories that a regular CPython build will 
 
 One big difference would be that EL Python would be a source-only project: it would *not* provide
 any prebuilt binary installers for any platform. Instead, the expectation would be that
-redistributors would take the project and produce prebuilt binaries in the formats of interest
-to them.
+redistributors and end users would take the project and produce their own binaries in the formats
+of interest to them.
 
 In addition, while EL Python would transparently consume pyc files, extension modules and wheel
 files built for CPython, and would default to emitting CPython compatible versions of such
@@ -231,6 +234,9 @@ a later CPython release).
 
 We'd like EL Python to be a PSF backed project, just like CPython, and contributors to EL Python
 would be required to sign the CPython CLA before their contributions can be accepted.
+
+We'd also expect any formal participation agreements to be worked out in collaboration with
+the PSF, rather than directly between participating organisations.
 
 # What Code of Conduct would the project use?
 
@@ -257,7 +263,7 @@ in RHEL & CentOS 6).
 
 An example of this approach can be seen by looking at the patch set for Python 2.7 in CentOS 7,
 which relies on selective backports atop 2.7.5 rather than rebasing outright to upstream
-maintenance releases: https://git.centos.org/tree/rpms!python.git/c7/SOURCES
+maintenance releases: https://git.centos.org/rpms/python/blob/c7/f/SOURCES
 
 Unfortunately, while this approach does address the key concern of providing a stable,
 long-lived foundation for enterprise developers to build on, many other aspects of the
